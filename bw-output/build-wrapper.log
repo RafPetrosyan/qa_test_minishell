@@ -1,0 +1,72 @@
+Thu May 01 23:36:31 2025: build-wrapper, version 6.66 (linux-x86)
+Thu May 01 23:36:31 2025: System name: Linux Nodename: RafPetros Release: 6.11.0-21-generic Version: #21~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Mon Feb 24 16:52:15 UTC 2 Machine: x86_64
+Thu May 01 23:36:31 2025: socket path: /tmp/build-wrapper-socket.aFt3oy
+Thu May 01 23:36:31 2025: dynamic library found: /home/rafpetro/.local/share/Trash/files/qa_test_minishell.2/build-wrapper-linux-x86/libinterceptor-i686.so
+Thu May 01 23:36:31 2025: dynamic library found: /home/rafpetro/.local/share/Trash/files/qa_test_minishell.2/build-wrapper-linux-x86/libinterceptor-x86_64.so
+Thu May 01 23:36:31 2025: dynamic library found: /home/rafpetro/.local/share/Trash/files/qa_test_minishell.2/build-wrapper-linux-x86/libinterceptor-haswell.so
+Thu May 01 23:36:31 2025: cwd: </home/rafpetro/.local/share/Trash/files/qa_test_minishell.2>
+Thu May 01 23:36:31 2025: command executed as: <./build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bw-output>
+Thu May 01 23:36:31 2025: out-dir absolute path: </home/rafpetro/.local/share/Trash/files/qa_test_minishell.2/bw-output>
+Thu May 01 23:36:31 2025: command line received: <make>
+Thu May 01 23:36:31 2025: env 0: <SYSTEMD_EXEC_PID=2568>
+Thu May 01 23:36:31 2025: env 1: <SSH_AUTH_SOCK=/run/user/1000/keyring/ssh>
+Thu May 01 23:36:31 2025: env 2: <SESSION_MANAGER=local/RafPetros:@/tmp/.ICE-unix/2341,unix/RafPetros:/tmp/.ICE-unix/2341>
+Thu May 01 23:36:31 2025: env 3: <GNOME_TERMINAL_SCREEN=/org/gnome/Terminal/screen/8069cf35_ebfa_486a_923d_6f888dc088dd>
+Thu May 01 23:36:31 2025: env 4: <LANG=en_US.UTF-8>
+Thu May 01 23:36:31 2025: env 5: <XDG_CURRENT_DESKTOP=ubuntu:GNOME>
+Thu May 01 23:36:31 2025: env 6: <COLORTERM=truecolor>
+Thu May 01 23:36:31 2025: env 7: <WAYLAND_DISPLAY=wayland-0>
+Thu May 01 23:36:31 2025: env 8: <PWD=/home/rafpetro/Desktop/qa_test_minishell>
+Thu May 01 23:36:31 2025: env 9: <QT_IM_MODULE=ibus>
+Thu May 01 23:36:31 2025: env 10: <DESKTOP_SESSION=ubuntu>
+Thu May 01 23:36:31 2025: env 11: <USER=rafpetro>
+Thu May 01 23:36:31 2025: env 12: <XDG_MENU_PREFIX=gnome->
+Thu May 01 23:36:31 2025: env 13: <OLDPWD=/home/rafpetro/Desktop>
+Thu May 01 23:36:31 2025: env 14: <HOME=/home/rafpetro>
+Thu May 01 23:36:31 2025: env 15: <DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus>
+Thu May 01 23:36:31 2025: env 16: <GTK_MODULES=gail:atk-bridge>
+Thu May 01 23:36:31 2025: env 17: <XDG_DATA_DIRS=/usr/local/share/:/usr/share/:/var/lib/snapd/desktop>
+Thu May 01 23:36:31 2025: env 18: <VTE_VERSION=7600>
+Thu May 01 23:36:31 2025: env 19: <XDG_SESSION_DESKTOP=ubuntu>
+Thu May 01 23:36:31 2025: env 20: <GSM_SKIP_SSH_AGENT_WORKAROUND=true>
+Thu May 01 23:36:31 2025: env 21: <QT_ACCESSIBILITY=1>
+Thu May 01 23:36:31 2025: env 22: <GNOME_DESKTOP_SESSION_ID=this-is-deprecated>
+Thu May 01 23:36:31 2025: env 23: <GNOME_SETUP_DISPLAY=:1>
+Thu May 01 23:36:31 2025: env 24: <LOGNAME=rafpetro>
+Thu May 01 23:36:31 2025: env 25: <GNOME_TERMINAL_SERVICE=:1.170>
+Thu May 01 23:36:31 2025: env 26: <PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin>
+Thu May 01 23:36:31 2025: env 27: <XDG_RUNTIME_DIR=/run/user/1000>
+Thu May 01 23:36:31 2025: env 28: <XMODIFIERS=@im=ibus>
+Thu May 01 23:36:31 2025: env 29: <SHELL=/usr/bin/zsh>
+Thu May 01 23:36:31 2025: env 30: <XDG_SESSION_TYPE=wayland>
+Thu May 01 23:36:31 2025: env 31: <GNOME_SHELL_SESSION_MODE=ubuntu>
+Thu May 01 23:36:31 2025: env 32: <MEMORY_PRESSURE_WRITE=c29tZSAyMDAwMDAgMjAwMDAwMAA=>
+Thu May 01 23:36:31 2025: env 33: <USERNAME=rafpetro>
+Thu May 01 23:36:31 2025: env 34: <MEMORY_PRESSURE_WATCH=/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/session.slice/org.gnome.SettingsDaemon.MediaKeys.service/memory.pressure>
+Thu May 01 23:36:31 2025: env 35: <GNOME_KEYRING_CONTROL=/run/user/1000/keyring>
+Thu May 01 23:36:31 2025: env 36: <XAUTHORITY=/run/user/1000/.mutter-Xwaylandauth.R6DY52>
+Thu May 01 23:36:31 2025: env 37: <_=/home/rafpetro/Desktop/qa_test_minishell/./build-wrapper-linux-x86/build-wrapper-linux-x86-64>
+Thu May 01 23:36:31 2025: env 38: <DISPLAY=:0>
+Thu May 01 23:36:31 2025: env 39: <TERM=xterm-256color>
+Thu May 01 23:36:31 2025: env 40: <GDMSESSION=ubuntu>
+Thu May 01 23:36:31 2025: env 41: <XDG_SESSION_CLASS=user>
+Thu May 01 23:36:31 2025: env 42: <SHLVL=1>
+Thu May 01 23:36:31 2025: env 43: <PS1=%F{green}%n%f$ >
+Thu May 01 23:36:31 2025: executing: <make>
+Thu May 01 23:36:31 2025: initializing json file
+Thu May 01 23:36:31 2025: process created with pid: 30846
+Thu May 01 23:36:31 2025: parent pid: 30845
+Thu May 01 23:36:31 2025: working directory: </home/rafpetro/.local/share/Trash/files/qa_test_minishell.2>
+Thu May 01 23:36:31 2025: executable: </home/rafpetro/.local/share/Trash/files/qa_test_minishell.2/build-wrapper-linux-x86/build-wrapper-linux-x86-64>
+Thu May 01 23:36:31 2025: argv[0]: <./build-wrapper-linux-x86/build-wrapper-linux-x86-64>
+Thu May 01 23:36:31 2025: argv[1]: <-c>
+Thu May 01 23:36:31 2025: argv[2]: <make>
+Thu May 01 23:36:31 2025: skipping process with pid: 30846
+Thu May 01 23:36:31 2025: process created with pid: 30847
+Thu May 01 23:36:31 2025: parent pid: 30846
+Thu May 01 23:36:31 2025: working directory: </home/rafpetro/.local/share/Trash/files/qa_test_minishell.2>
+Thu May 01 23:36:31 2025: executable: </usr/bin/make>
+Thu May 01 23:36:31 2025: argv[0]: <make>
+Thu May 01 23:36:31 2025: skipping process with pid: 30847
+Thu May 01 23:36:31 2025: finalizing json file
+Thu May 01 23:36:31 2025: returned with code: 0
