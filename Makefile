@@ -11,9 +11,14 @@ OBJS = $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 LIBS = -L./libraries/readline/lib -lreadline -lncurses
 
+#$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+#	@mkdir -p $(OBJ_DIR)
+#	$(CC) $(CFLAGS) -c $< -o $@
+
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) -c $< -o $@ -I./includes -I./libraries/readline-8.2
+
 
 all: $(NAME)
 
