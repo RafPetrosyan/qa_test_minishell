@@ -1,54 +1,39 @@
-name: SonarCloud Analysis
+name: SonarCloud
 
 on:
   push:
     branches:
       - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
 
 jobs:
-  build:
-    name: Build and Analyze
+  sonarcloud:
+    name: SonarCloud Analysis
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y build-essential libncurses-dev
-
-      - name: Download and prepare build-wrapper
+      - name: Set up GCC
         run: |
-          wget https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
-          unzip build-wrapper-linux-x86.zip
-          chmod +x build-wrapper-linux-x86/build-wrapper-linux-x86-64
-          mkdir -p bw-output
+          sudo apt-get update
+          sudo apt-get install -y gcc g++ make
 
-      - name: Configure readline
+      - name: Download and run build-wrapper
         run: |
-          cd libraries/readline-8.2
-          ./configure --prefix=$GITHUB_WORKSPACE/libraries/readline
-          make
-          make install
-          cd ../..
+          mkdir bw-output
+          build-wrapper-linux-x86-64 --out-dir bw-output make re
 
-      - name: Clean project
-        run: make fclean || true
-
-      - name: Build with build-wrapper
-        run: |
-          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bw-output make re
-
-      - name: Show build-wrapper output contents
-        run: ls -R bw-output
-
-      - name: Run SonarCloud analysis
+      - name: Set up SonarCloud
         uses: SonarSource/sonarcloud-github-action@v2
+        with:
+          args: >
+            -Dsonar.projectKey=RafPetrosyan_qa_test_minishell
+            -Dsonar.organization=rafpetrosyan
+            -Dsonar.cfamily.compile-commands=bw-output/compile_commands.json
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
