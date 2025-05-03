@@ -11,47 +11,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
+      - name: Set up GCC
+        uses: egor-tensin/setup-gcc@v1
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          version: 12
 
-      - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y build-essential libncurses-dev
-
-      - name: Download and prepare build-wrapper
+      - name: Set up build-wrapper
         run: |
           wget https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
           unzip build-wrapper-linux-x86.zip
-          chmod +x build-wrapper-linux-x86/build-wrapper-linux-x86-64
-          mkdir -p bw-output
 
-      - name: Configure readline
+      - name: Build project with build-wrapper
         run: |
-          cd libraries/readline-8.2
-          ./configure --prefix=$GITHUB_WORKSPACE/libraries/readline
-          make
-          make install
-          cd ../..
+          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bw-output make fclean && make
 
-      - name: Clean project
-        run: make fclean || true
-
-      - name: Build with build-wrapper
-        run: |
-          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bw-output make
-
-      - name: Run SonarCloud analysis
+      - name: Run SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
+        with:
+          projectBaseDir: .
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Upload build-wrapper output (optional)
+        uses: actions/upload-artifact@v3
         with:
-          args: >
-            -Dsonar.projectKey=RafPetrosyan_qa_test_minishell
-            -Dsonar.organization=rafpetrosyan
-            -Dsonar.cfamily.build-wrapper-output=bw-output
-            -Dsonar.host.url=https://sonarcloud.io
+          name: bw-output
+          path: bw-output
