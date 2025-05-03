@@ -11,9 +11,12 @@ OBJS = $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 LIBS = -L./libraries/readline/lib -lreadline -lncurses
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+FORCE:
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c FORCE
 	@mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
+
 
 all: $(NAME)
 
