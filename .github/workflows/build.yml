@@ -1,4 +1,4 @@
-name: SonarCloud
+name: SonarCloud Analysis
 
 on:
   push:
@@ -8,41 +8,37 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  sonarcloud:
-    name: SonarCloud Analysis
+  build:
+    name: Build and Analyze
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up JDK 17 (required by SonarCloud)
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
           distribution: 'temurin'
+          java-version: 17
 
-      - name: Install dependencies
+      - name: Install build dependencies
         run: |
           sudo apt update
-          sudo apt install -y build-essential make libreadline-dev unzip wget
-
-
+          sudo apt install -y build-essential make wget unzip libreadline-dev
 
       - name: Download build-wrapper
         run: |
           wget https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
           unzip build-wrapper-linux-x86.zip
 
-      - name: Clean build
+      - name: Clean project
         run: make fclean || true
 
       - name: Build with build-wrapper
         run: |
-          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bw-output --project-root . -- make
-
-      - name: Check object files
-        run: find . -name "*.o"
+          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
+            --out-dir bw-output --project-root . -- make
 
       - name: Run SonarCloud analysis
         uses: SonarSource/sonarcloud-github-action@v2
