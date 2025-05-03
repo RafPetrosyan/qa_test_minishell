@@ -1,33 +1,59 @@
-NAME = minishell
+name: SonarCloud Analysis
 
-CC = gcc
-CFLAGS = -Wall -Wextra -Werror -g -I./includes -I./libraries/readline/include
+on:
+  push:
+    branches:
+      - main
 
-SRC_DIR = sources
-OBJ_DIR = objects
+jobs:
+  build:
+    name: Build and Analyze
+    runs-on: ubuntu-latest
 
-SRCS = $(wildcard $(SRC_DIR)/*.c)
-OBJS = $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-LIBS = -L./libraries/readline/lib -lreadline -lncurses
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-FORCE:
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y build-essential libncurses-dev
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c FORCE
-	@mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+      - name: Download and prepare build-wrapper
+        run: |
+          wget https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
+          unzip build-wrapper-linux-x86.zip
+          chmod +x build-wrapper-linux-x86/build-wrapper-linux-x86-64
+          mkdir -p bw-output
 
-all: $(NAME)
+      - name: Configure readline
+        run: |
+          cd libraries/readline-8.2
+          ./configure --prefix=$GITHUB_WORKSPACE/libraries/readline
+          make
+          make install
+          cd ../..
 
-$(NAME): $(OBJS)
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) $(LIBS)
+      - name: Build with build-wrapper
+        run: |
+          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
+            --out-dir bw-output \
+            bash -c "make all"
 
-clean:
-	rm -rf $(OBJ_DIR)
+      - name: Debug: Show object files
+        run: find . -name '*.o' -exec ls -l {} \;
 
-fclean: clean
-	rm -f $(NAME)
-
-re: fclean all
-
-.PHONY: all clean fclean re
+      - name: Run SonarCloud analysis
+        uses: SonarSource/sonarcloud-github-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=RafPetrosyan_qa_test_minishell
+            -Dsonar.organization=rafpetrosyan
+            -Dsonar.sources=.
+            -Dsonar.cfamily.build-wrapper-output=bw-output
