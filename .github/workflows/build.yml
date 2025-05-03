@@ -38,7 +38,8 @@ jobs:
       - name: Build with build-wrapper
         run: |
           ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
-            --out-dir bw-output --project-root . -- make
+          --out-dir bw-output --project-root . -- make all
+
 
       - name: Run SonarCloud analysis
         uses: SonarSource/sonarcloud-github-action@v2
