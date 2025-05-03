@@ -38,7 +38,7 @@ jobs:
 
       - name: Build with build-wrapper
         run: |
-          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bw-output --project-root . make
+          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bw-output --project-root . -- make
 
       - name: Check object files
         run: find . -name "*.o"
