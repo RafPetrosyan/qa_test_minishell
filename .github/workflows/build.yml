@@ -1,64 +1,33 @@
-name: SonarCloud Analysis
+NAME = minishell
 
-on:
-  push:
-    branches:
-      - main
+CC = gcc
+CFLAGS = -Wall -Wextra -Werror -g -I./includes -I./libraries/readline/include
 
-jobs:
-  build:
-    name: Build and Analyze
-    runs-on: ubuntu-latest
+SRC_DIR = sources
+OBJ_DIR = objects
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+SRCS = $(wildcard $(SRC_DIR)/*.c)
+OBJS = $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
+LIBS = -L./libraries/readline/lib -lreadline -lncurses
 
-      - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y build-essential libncurses-dev
+FORCE:
 
-      - name: Download and prepare build-wrapper
-        run: |
-          wget https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
-          unzip build-wrapper-linux-x86.zip
-          chmod +x build-wrapper-linux-x86/build-wrapper-linux-x86-64
-          mkdir -p bw-output
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c FORCE
+	@mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-      - name: Configure readline
-        run: |
-          cd libraries/readline-8.2
-          ./configure --prefix=$GITHUB_WORKSPACE/libraries/readline
-          make
-          make install
-          cd ../..
+all: $(NAME)
 
-      - name: Clean project
-        run: make fclean || true
+$(NAME): $(OBJS)
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) $(LIBS)
 
-      - name: Build with build-wrapper
-        run: |
-          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
-            --out-dir bw-output \
-            bash -c "make fclean && make all"
+clean:
+	rm -rf $(OBJ_DIR)
 
+fclean: clean
+	rm -f $(NAME)
 
+re: fclean all
 
-      - name: Show build-wrapper output contents
-        run: ls -R bw-output
-
-      - name: Run SonarCloud analysis
-        uses: SonarSource/sonarcloud-github-action@v2
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.projectKey=RafPetrosyan_qa_test_minishell
-            -Dsonar.organization=rafpetrosyan
-            -Dsonar.sources=.
-            -Dsonar.cfamily.build-wrapper-output=bw-output
+.PHONY: all clean fclean re
