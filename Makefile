@@ -5,7 +5,7 @@ CC = cc
 LIBS_DIR = libraries
 READLINE_LIB_PATH = $(LIBS_DIR)/readline/lib
 
-INC_DIRS = -I./includes -I./$(LIBS_DIR)/$(READLINE)/include
+CFLAGS = -Wall -Wextra -Werror -g -I./includes -I$(WORKSPACE)/libraries/readline/include
 CFLAGS = -Wall -Wextra -Werror -g $(INC_DIRS)
 
 SRCS_DIR = sources/
