@@ -20,8 +20,16 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Install GCC 12
+        run: sudo apt-get update && sudo apt-get install -y gcc-12 g++-12
+
+      - name: Use GCC 12
+        run: |
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 100 \
+                                   --slave /usr/bin/g++ g++ /usr/bin/g++-12
+
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y build-essential libncurses-dev
+        run: sudo apt-get install -y build-essential libncurses-dev
 
       - name: Download and prepare build-wrapper
         run: |
@@ -41,16 +49,19 @@ jobs:
       - name: Clean project
         run: make fclean || true
 
-      - name: Get full path to workspace
-        run: echo "FULLPATH=$(pwd)" >> $GITHUB_ENV
-  
       - name: Build with build-wrapper
         run: |
-          ${{ env.FULLPATH }}/build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
-          --out-dir ${{ env.FULLPATH }}/bw-output make re
+          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bw-output make re
 
-      - name: Show build-wrapper output contents
-        run: ls -R bw-output
+      - name: Check compile_commands.json
+        run: |
+          if [ ! -f bw-output/compile_commands.json ]; then
+            echo "❌ compile_commands.json not found!"
+            exit 1
+          else
+            echo "✅ compile_commands.json found."
+            head -n 20 bw-output/compile_commands.json
+          fi
 
       - name: Run SonarCloud analysis
         uses: SonarSource/sonarcloud-github-action@v2
