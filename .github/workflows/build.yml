@@ -44,8 +44,7 @@ jobs:
       - name: Build with build-wrapper
         run: |
           ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bw-output \
-          make CC=gcc CFLAGS="-g -O2" --always-make
-
+          make CC=gcc CFLAGS="-g -O2 -Iincludes" --always-make
 
       - name: Show build-wrapper output contents
         run: ls -R bw-output
