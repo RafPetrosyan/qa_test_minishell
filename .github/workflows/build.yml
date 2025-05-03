@@ -41,9 +41,13 @@ jobs:
       - name: Clean project
         run: make fclean || true
 
+      - name: Get full path to workspace
+        run: echo "FULLPATH=$(pwd)" >> $GITHUB_ENV
+  
       - name: Build with build-wrapper
         run: |
-          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bw-output make re
+          ${{ env.FULLPATH }}/build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
+          --out-dir ${{ env.FULLPATH }}/bw-output make re
 
       - name: Show build-wrapper output contents
         run: ls -R bw-output
