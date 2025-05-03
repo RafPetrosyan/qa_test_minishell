@@ -45,7 +45,8 @@ jobs:
         run: |
           ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
             --out-dir bw-output \
-            make clean all
+            bash -c "make fclean && make all"
+
 
 
       - name: Show build-wrapper output contents
