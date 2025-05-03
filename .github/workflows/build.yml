@@ -43,8 +43,9 @@ jobs:
 
       - name: Build with build-wrapper
         run: |
-          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bw-output make --always-make --debug=b
-
+          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
+            --out-dir bw-output \
+            make all
 
       - name: Show build-wrapper output contents
         run: ls -R bw-output
