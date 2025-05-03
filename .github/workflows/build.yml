@@ -1,4 +1,6 @@
-name: SonarCloud Analysis
+# .github/workflows/sonarcloud.yml
+
+name: SonarCloud
 
 on:
   push:
@@ -11,32 +13,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up GCC
-        uses: egor-tensin/setup-gcc@v1
-        with:
-          version: 12
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y build-essential
 
-      - name: Set up build-wrapper
+      - name: Download and extract build-wrapper
         run: |
-          wget https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
-          unzip build-wrapper-linux-x86.zip
+          mkdir -p build-wrapper-linux
+          curl -sSLo bw.zip https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
+          unzip bw.zip -d build-wrapper-linux
 
-      - name: Build project with build-wrapper
+      - name: Run build-wrapper around make
         run: |
-          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bw-output make fclean && make
+          ./build-wrapper-linux/build-wrapper-linux-x86-64 --out-dir bw-output make fclean && ./build-wrapper-linux/build-wrapper-linux-x86-64 --out-dir bw-output make
 
-      - name: Run SonarCloud Scan
+      - name: Run SonarCloud scan
         uses: SonarSource/sonarcloud-github-action@v2
         with:
-          projectBaseDir: .
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-      - name: Upload build-wrapper output (optional)
-        uses: actions/upload-artifact@v3
-        with:
-          name: bw-output
-          path: bw-output
+          args: >
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
