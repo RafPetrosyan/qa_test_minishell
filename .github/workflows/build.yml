@@ -43,15 +43,12 @@ jobs:
 
       - name: Build with build-wrapper
         run: |
-          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bw-output make
+          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bw-output make re
+
+      - name: Show build-wrapper output contents
+        run: ls -R bw-output
 
       - name: Run SonarCloud analysis
         uses: SonarSource/sonarcloud-github-action@v2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.projectKey=RafPetrosyan_qa_test_minishell
-            -Dsonar.organization=rafpetrosyan
-            -Dsonar.cfamily.build-wrapper-output=bw-output
-            -Dsonar.host.url=https://sonarcloud.io
