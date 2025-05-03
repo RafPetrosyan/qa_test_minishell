@@ -9,7 +9,7 @@ on:
 
 jobs:
   sonarcloud:
-    name: SonarCloud Static Analysis
+    name: SonarCloud Analysis
     runs-on: ubuntu-latest
 
     steps:
@@ -32,19 +32,24 @@ jobs:
           wget https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
           unzip build-wrapper-linux-x86.zip
 
-      - name: Build with build-wrapper
+      - name: Clean build
+        run: make fclean || true
+
+      - name: Build project with build-wrapper
         run: |
-          make clean || true
           ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bw-output make
 
+      - name: Check object files
+        run: find . -name "*.o"
 
-      - name: Run SonarCloud scan
+      - name: Run SonarCloud analysis
         uses: SonarSource/sonarcloud-github-action@v2
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
             -Dsonar.projectKey=RafPetrosyan_qa_test_minishell
             -Dsonar.organization=rafpetrosyan
-            -Dsonar.cfamily.build-wrapper-output=bw-output
+            -Dsonar.sources=sources,includes
+            -Dsonar.cfamily.compile-commands=bw-output/compile_commands.json
             -Dsonar.host.url=https://sonarcloud.io
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
