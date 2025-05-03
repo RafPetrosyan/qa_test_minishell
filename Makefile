@@ -17,7 +17,6 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c FORCE
 	@mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-
 all: $(NAME)
 
 $(NAME): $(OBJS)
