@@ -1,0 +1,11 @@
+# Թարգմանված օբյեկտների ֆայլեր
+/objects/
+
+# SonarCloud-ի build-wrapper ելքը
+/bw-output/
+
+# Այլ build արդյունքներ
+*.o
+*.out
+*.log
+*.swp
