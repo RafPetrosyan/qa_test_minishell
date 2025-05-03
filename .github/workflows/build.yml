@@ -25,7 +25,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y build-essential unzip wget
+          sudo apt install -y build-essential unzip wget libreadline-dev
 
       - name: Download build-wrapper
         run: |
