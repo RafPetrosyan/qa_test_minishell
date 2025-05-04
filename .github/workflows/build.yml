@@ -55,7 +55,7 @@ jobs:
             done
             '
 
-      - name: Debug: show first 20 lines of compile_commands.json
+      - name: "Debug: show first 20 lines of compile_commands.json"
         run: |
           echo "=== First 20 lines of compile_commands.json ==="
           head -n 20 bw-output/compile_commands.json || echo "Not found"
