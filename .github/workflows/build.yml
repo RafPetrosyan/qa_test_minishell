@@ -20,33 +20,32 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Configure readline
-        run: |
-          cd libraries/readline-8.2
-          ./configure --prefix=$GITHUB_WORKSPACE/libraries/readline
-          make
-          make install
-          cd ../..
-  
-      - name: Install build dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential libncurses-dev
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y build-essential libncurses-dev
 
-      - name: Download and set up build-wrapper
+      - name: Download and prepare build-wrapper
         run: |
           wget https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
           unzip build-wrapper-linux-x86.zip
           chmod +x build-wrapper-linux-x86/build-wrapper-linux-x86-64
 
-      - name: Clean and build with build-wrapper
+      - name: Build and wrap compilation
         run: |
-            ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
+          rm -rf bw-output minishell objects
+          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
             --out-dir bw-output \
-            bash -c "rm -rf minishell objects && make --always-make"
+            make --always-make
 
+      - name: Show build-wrapper dump
+        run: cat bw-output/build-wrapper-dump.json || echo "No dump found"
 
       - name: Run SonarCloud analysis
         uses: SonarSource/sonarcloud-github-action@v2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=RafPetrosyan_qa_test_minishell
+            -Dsonar.organization=rafpetrosyan
+            -Dsonar.sources=.
+            -Dsonar.cfamily.build-wrapper-output=bw-output
