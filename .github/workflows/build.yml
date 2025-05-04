@@ -50,8 +50,8 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
-        args: >
-          -Dsonar.projectKey=RafPetrosyan_qa_test_minishell
-          -Dsonar.organization=rafpetrosyan
-          -Dsonar.sources=.
-          -Dsonar.cfamily.compile-commands=bw-output/compile_commands.json
+          args: >
+            -Dsonar.projectKey=RafPetrosyan_qa_test_minishell
+            -Dsonar.organization=rafpetrosyan
+            -Dsonar.sources=.
+            -Dsonar.cfamily.compile-commands=bw-output/compile_commands.json
