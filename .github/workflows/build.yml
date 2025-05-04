@@ -1,34 +1,25 @@
-name: SonarCloud Analysis
-
-on:
-  push:
-    branches:
-      - main
-
 jobs:
   sonarcloud:
-    name: SonarCloud
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Install dependencies (readline)
         run: |
           sudo apt update
-          sudo apt install -y gcc build-essential
+          sudo apt install -y gcc build-essential libreadline-dev unzip curl
 
       - name: Download and extract build-wrapper
         run: |
           curl -sSLo bw.zip https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
           unzip bw.zip
 
-      - name: Compile manually with build-wrapper
+      - name: Compile with build-wrapper
         run: |
           ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bw-output \
-          gcc -Wall -Wextra -Werror -I./includes -I./libraries/readline-8.2 \
-          -c *.c
+          gcc -Wall -Wextra -Werror -I./includes -c *.c
 
       - name: Run SonarCloud analysis
         uses: SonarSource/sonarcloud-github-action@v2
