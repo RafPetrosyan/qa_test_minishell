@@ -21,27 +21,55 @@ jobs:
           distribution: 'temurin'
 
       - name: Install build dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential libncurses-dev
+        run: sudo apt-get update && sudo apt-get install -y build-essential libncurses-dev
 
-      - name: Download and set up build-wrapper
+      - name: Build and install readline locally
+        run: |
+          cd libraries/readline-8.2
+          ./configure --prefix=$GITHUB_WORKSPACE/libraries/readline
+          make
+          make install
+          cd ../..
+
+      - name: Download and prepare build-wrapper
         run: |
           wget https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
           unzip build-wrapper-linux-x86.zip
           chmod +x build-wrapper-linux-x86/build-wrapper-linux-x86-64
 
-      - name: Build with build-wrapper
+      - name: Compile manually with build-wrapper (no Makefile)
         run: |
-          rm -rf bw-output
-          find sources -name '*.o' -delete
-          rm -f minishell
-          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
-            --out-dir bw-output \
-            make --always-make VERBOSE=1 \
-            CFLAGS="-Wall -Wextra -Werror -g -I$GITHUB_WORKSPACE/includes -I$GITHUB_WORKSPACE/libraries/readline/include -fdiagnostics-color=always"
+          rm -rf bw-output objects minishell
+          mkdir -p objects
+
+          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bw-output bash -c '
+            for file in sources/*.c; do
+              echo ">>> compiling: $file"
+              gcc -Wall -Wextra -Werror -g \
+                -I$GITHUB_WORKSPACE/includes \
+                -I$GITHUB_WORKSPACE/libraries/readline/include \
+                -c "$file" -o "objects/$(basename "${file%.c}.o")"
+            done
+
+            gcc -Wall -Wextra -Werror -g \
+              -I$GITHUB_WORKSPACE/includes \
+              -I$GITHUB_WORKSPACE/libraries/readline/include \
+              -o minishell objects/*.o \
+              -L$GITHUB_WORKSPACE/libraries/readline/lib -lreadline -lncurses
+          '
+
+      - name: Show build-wrapper dump
+        run: |
+          echo "[INFO] Previewing build-wrapper-dump.json:"
+          head -n 50 bw-output/build-wrapper-dump.json || echo "No dump file found"
 
       - name: Run SonarCloud analysis
         uses: SonarSource/sonarcloud-github-action@v2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=RafPetrosyan_qa_test_minishell
+            -Dsonar.organization=rafpetrosyan
+            -Dsonar.sources=.
+            -Dsonar.cfamily.compile-commands=bw-output/compile_commands.json
