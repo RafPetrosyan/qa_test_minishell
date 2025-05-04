@@ -47,6 +47,12 @@ jobs:
             -L"$GITHUB_WORKSPACE/libraries/readline-8.2/install/lib" \
             -c $FILES
 
+      - name: Debug: print first 20 lines of compile_commands.json
+        run: |
+          echo "=== First 20 lines of compile_commands.json ==="
+          head -n 20 bw-output/compile_commands.json || echo "File not found"
+
+
       - name: Run SonarCloud analysis
         uses: SonarSource/sonarcloud-github-action@v2
         env:
