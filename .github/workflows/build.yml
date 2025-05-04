@@ -57,14 +57,15 @@ jobs:
             --out-dir bw-output \
             bash -c '
             for file in *.c; do
+              absfile=$(realpath "$file")
+              abso=$(realpath "objects/${file%.c}.o")
               $CC -Wall -Wextra -Werror \
                   -I$(pwd)/includes \
                   -I$(pwd)/libraries/readline-8.2/install/include \
                   -L$(pwd)/libraries/readline-8.2/install/lib \
-                  -c "$(pwd)/$file" -o "$(pwd)/objects/${file%.c}.o"
+                  -c "$absfile" -o "$abso"
             done
             '
-
 
       - name: Show compile_commands.json summary
         run: |
