@@ -20,8 +20,16 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Install dependencies
+      - name: Install build dependencies
         run: sudo apt-get update && sudo apt-get install -y build-essential libncurses-dev
+
+      - name: Build and install readline locally
+        run: |
+          cd libraries/readline-8.2
+          ./configure --prefix=$GITHUB_WORKSPACE/libraries/readline
+          make
+          make install
+          cd ../..
 
       - name: Download and prepare build-wrapper
         run: |
@@ -29,18 +37,14 @@ jobs:
           unzip build-wrapper-linux-x86.zip
           chmod +x build-wrapper-linux-x86/build-wrapper-linux-x86-64
 
-      - name: Build and wrap compilation
+      - name: Build with build-wrapper
         run: |
           rm -rf bw-output minishell objects
           ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
             --out-dir bw-output \
             make --always-make VERBOSE=1
 
-
       - name: Show build-wrapper dump
-        run: cat bw-output/build-wrapper-dump.json || echo "No dump found"
-
-      - name: Inspect build-wrapper-dump.json
         run: |
           echo "[INFO] Previewing build-wrapper-dump.json:"
           head -n 50 bw-output/build-wrapper-dump.json || echo "No dump file found"
