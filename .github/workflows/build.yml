@@ -34,7 +34,8 @@ jobs:
           rm -rf bw-output minishell objects
           ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
             --out-dir bw-output \
-            make --always-make
+            make --always-make VERBOSE=1
+
 
       - name: Show build-wrapper dump
         run: cat bw-output/build-wrapper-dump.json || echo "No dump found"
