@@ -7,13 +7,13 @@ SRC_DIR = sources
 OBJ_DIR = objects
 
 SRCS = $(wildcard $(SRC_DIR)/*.c)
-OBJS = $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+ABS_SRCS = $(realpath $(SRCS))
+OBJS = $(ABS_SRCS:%.c=%.o)
 
 LIBS = -L./libraries/readline/lib -lreadline -lncurses
 
-# Կոմպիլացիոն կանոնը
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(OBJ_DIR)
+# Կոմպիլացիոն կանոնը (տեղադրում է .o ֆայլը նույն վայրում)
+%.o: %.c
 	@echo ">>> compiling: $<"
 	$(CC) $(CFLAGS) -c $< -o $@
 
@@ -23,9 +23,9 @@ all: $(NAME)
 $(NAME): $(OBJS)
 	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) $(LIBS)
 
-# Մաքրման կանոններ
 clean:
 	rm -rf $(OBJ_DIR)
+	find $(SRC_DIR) -name '*.o' -delete
 
 fclean: clean
 	rm -f $(NAME)
