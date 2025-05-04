@@ -36,15 +36,16 @@ jobs:
           unzip bw.zip
           chmod +x build-wrapper-linux-x86/build-wrapper-linux-x86-64
 
-      - name: Compile project with build-wrapper (no Makefile)
+      - name: Build project with build-wrapper
         run: |
           ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
             --out-dir bw-output \
-            bash -c 'for file in *.c; do gcc -Wall -Wextra -Werror \
+            gcc -Wall -Wextra -Werror \
             -I./includes \
             -I./libraries/readline-8.2/install/include \
             -L./libraries/readline-8.2/install/lib \
-            -c "$file"; done'
+            -c *.c
+
 
       - name: Run SonarCloud analysis
         uses: SonarSource/sonarcloud-github-action@v2
