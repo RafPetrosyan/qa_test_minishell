@@ -1,8 +1,3 @@
-# build artifacts
+/objects/
+/bw-output/
 *.o
-minishell
-readline-8.2.tar.gz
-
-# build-wrapper
-bw-output/
-.scannerwork/
