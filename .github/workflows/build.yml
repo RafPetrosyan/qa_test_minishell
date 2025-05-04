@@ -20,6 +20,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Configure readline
+        run: |
+          cd libraries/readline-8.2
+          ./configure --prefix=$GITHUB_WORKSPACE/libraries/readline
+          make
+          make install
+          cd ../..
+  
       - name: Install build dependencies
         run: |
           sudo apt-get update
