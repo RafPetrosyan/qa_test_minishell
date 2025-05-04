@@ -31,11 +31,15 @@ jobs:
           unzip build-wrapper-linux-x86.zip
           chmod +x build-wrapper-linux-x86/build-wrapper-linux-x86-64
 
-      - name: Build and wrap (clean + all)
+      - name: Build with build-wrapper
         run: |
+          rm -rf bw-output
+          find sources -name '*.o' -delete
+          rm -f minishell
           ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
             --out-dir bw-output \
-            make fclean all
+            make --always-make VERBOSE=1 \
+            CFLAGS="-Wall -Wextra -Werror -g -I$GITHUB_WORKSPACE/includes -I$GITHUB_WORKSPACE/libraries/readline/include -fdiagnostics-color=always"
 
       - name: Run SonarCloud analysis
         uses: SonarSource/sonarcloud-github-action@v2
