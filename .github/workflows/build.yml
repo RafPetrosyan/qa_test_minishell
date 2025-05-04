@@ -37,31 +37,28 @@ jobs:
           unzip build-wrapper-linux-x86.zip
           chmod +x build-wrapper-linux-x86/build-wrapper-linux-x86-64
 
-      - name: Compile manually with build-wrapper (no Makefile)
+      - name: Manual build using build-wrapper
         run: |
           rm -rf bw-output objects minishell
           mkdir -p objects
-
           ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bw-output bash -c '
             for file in sources/*.c; do
               echo ">>> compiling: $file"
-              gcc -Wall -Wextra -Werror -g \
+              gcc -Wall -Wextra -Werror -g -std=c99 \
                 -I$GITHUB_WORKSPACE/includes \
                 -I$GITHUB_WORKSPACE/libraries/readline/include \
                 -c "$file" -o "objects/$(basename "${file%.c}.o")"
             done
 
-            gcc -Wall -Wextra -Werror -g \
+            gcc -Wall -Wextra -Werror -g -std=c99 \
               -I$GITHUB_WORKSPACE/includes \
               -I$GITHUB_WORKSPACE/libraries/readline/include \
               -o minishell objects/*.o \
               -L$GITHUB_WORKSPACE/libraries/readline/lib -lreadline -lncurses
           '
 
-      - name: Show build-wrapper dump
-        run: |
-          echo "[INFO] Previewing build-wrapper-dump.json:"
-          head -n 50 bw-output/build-wrapper-dump.json || echo "No dump file found"
+      - name: Preview build-wrapper-dump.json
+        run: head -n 50 bw-output/build-wrapper-dump.json || echo "No dump found"
 
       - name: Run SonarCloud analysis
         uses: SonarSource/sonarcloud-github-action@v2
