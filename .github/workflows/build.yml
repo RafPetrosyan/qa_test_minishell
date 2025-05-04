@@ -13,12 +13,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install dependencies (compiler, unzip, wget)
+      - name: Install dependencies
         run: |
           sudo apt update
           sudo apt install -y build-essential wget curl unzip
 
-      - name: Download and install GNU Readline 8.2 locally
+      - name: Download and build GNU Readline 8.2
         run: |
           mkdir -p libraries
           wget https://ftp.gnu.org/gnu/readline/readline-8.2.tar.gz
@@ -30,23 +30,22 @@ jobs:
           make install
           cd ../..
 
-      - name: Download and prepare build-wrapper
+      - name: Download and extract build-wrapper
         run: |
           curl -sSLo bw.zip https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
           unzip bw.zip
           chmod +x build-wrapper-linux-x86/build-wrapper-linux-x86-64
 
-      - name: Build project with build-wrapper
+      - name: Compile project with build-wrapper using absolute paths
         run: |
+          FILES=$(find "$GITHUB_WORKSPACE" -maxdepth 1 -name '*.c')
           ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
             --out-dir bw-output \
             gcc -Wall -Wextra -Werror \
-              -I"$GITHUB_WORKSPACE/includes" \
-              -I"$GITHUB_WORKSPACE/libraries/readline-8.2/install/include" \
-              -L"$GITHUB_WORKSPACE/libraries/readline-8.2/install/lib" \
-              -c $GITHUB_WORKSPACE/*.c
-
-
+            -I"$GITHUB_WORKSPACE/includes" \
+            -I"$GITHUB_WORKSPACE/libraries/readline-8.2/install/include" \
+            -L"$GITHUB_WORKSPACE/libraries/readline-8.2/install/lib" \
+            -c $FILES
 
       - name: Run SonarCloud analysis
         uses: SonarSource/sonarcloud-github-action@v2
