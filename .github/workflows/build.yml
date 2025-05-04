@@ -39,11 +39,20 @@ jobs:
           unzip build-wrapper-linux-x86.zip
           chmod +x build-wrapper-linux-x86/build-wrapper-linux-x86-64
 
-      - name: Wrap compilation with build-wrapper
+      - name: Build with build-wrapper
         run: |
+          mkdir -p objects
           ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
             --out-dir bw-output \
-            bash -c 'find "$GITHUB_WORKSPACE" -maxdepth 1 -name "*.c" | xargs -n 1 -I {} gcc -Wall -Wextra -Werror -I"$GITHUB_WORKSPACE/includes" -I"$GITHUB_WORKSPACE/libraries/readline-8.2/install/include" -L"$GITHUB_WORKSPACE/libraries/readline-8.2/install/lib" -c {}'
+            bash -c '
+            for file in *.c; do
+              gcc -Wall -Wextra -Werror \
+                  -I./includes \
+                  -I./libraries/readline-8.2/install/include \
+                  -L./libraries/readline-8.2/install/lib \
+                  -c "$file" -o "objects/${file%.c}.o"
+            done
+            '
 
       - name: "Debug: show first 20 lines of compile_commands.json"
         run: |
@@ -59,6 +68,5 @@ jobs:
             -Dsonar.projectKey=RafPetrosyan_qa_test_minishell
             -Dsonar.organization=rafpetrosyan
             -Dsonar.sources=.
-            -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.sourceEncoding=UTF-8
             -Dsonar.cfamily.compile-commands=bw-output/compile_commands.json
+            -Dsonar.host.url=https://sonarcloud.io
