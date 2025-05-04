@@ -1,7 +1,11 @@
 NAME = minishell
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -g -I./includes -I./libraries/readline/include
+CFLAGS = -Wall -Wextra -Werror -g \
+    -I./includes \
+    -I./libraries/readline/include \
+    -I./libraries/readline/include/readline
+
 
 SRC_DIR = sources
 OBJ_DIR = objects
