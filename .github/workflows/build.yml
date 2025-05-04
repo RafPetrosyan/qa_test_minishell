@@ -45,16 +45,16 @@ jobs:
             for file in sources/*.c; do
               echo ">>> compiling: $file"
               gcc -Wall -Wextra -Werror -g -std=c99 \
-                -I$GITHUB_WORKSPACE/includes \
-                -I$GITHUB_WORKSPACE/libraries/readline/include \
+                -I./includes \
+                -I./libraries/readline/include \
                 -c "$file" -o "objects/$(basename "${file%.c}.o")"
             done
 
             gcc -Wall -Wextra -Werror -g -std=c99 \
-              -I$GITHUB_WORKSPACE/includes \
-              -I$GITHUB_WORKSPACE/libraries/readline/include \
+              -I./includes \
+              -I./libraries/readline/include \
               -o minishell objects/*.o \
-              -L$GITHUB_WORKSPACE/libraries/readline/lib -lreadline -lncurses
+              -L./libraries/readline/lib -lreadline -lncurses
           '
 
       - name: Preview build-wrapper-dump.json
@@ -64,9 +64,3 @@ jobs:
         uses: SonarSource/sonarcloud-github-action@v2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.projectKey=RafPetrosyan_qa_test_minishell
-            -Dsonar.organization=rafpetrosyan
-            -Dsonar.sources=.
-            -Dsonar.cfamily.compile-commands=bw-output/compile_commands.json
