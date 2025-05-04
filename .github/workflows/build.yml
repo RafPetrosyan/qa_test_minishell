@@ -21,7 +21,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Install build dependencies
-        run: sudo apt-get update && sudo apt-get install -y build-essential libncurses-dev wget unzip
+        run: sudo apt-get update && sudo apt-get install -y build-essential libncurses-dev wget unzip jq
 
       - name: Install GCC 12
         run: |
@@ -48,11 +48,10 @@ jobs:
           unzip build-wrapper-linux-x86.zip
           chmod +x build-wrapper-linux-x86/build-wrapper-linux-x86-64
 
-      - name: Build with build-wrapper using gcc-12
+      - name: Build with build-wrapper using gcc-12 and C99
         run: |
           mkdir -p objects
           export CC=/usr/bin/gcc-12
-          export CXX=/usr/bin/g++-12
           ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
             --out-dir bw-output \
             bash -c '
@@ -73,7 +72,7 @@ jobs:
           echo "First file entry:"
           jq '.[0]' bw-output/compile_commands.json
 
-      - name: "Debug: show first 20 lines of compile_commands.json"
+      - name: Debug: show first 20 lines of compile_commands.json
         run: |
           echo "=== First 20 lines of compile_commands.json ==="
           head -n 20 bw-output/compile_commands.json || echo "Not found"
