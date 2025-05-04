@@ -1,3 +1,4 @@
-/objects/
-/bw-output/
-*.o
+objects/
+minishell
+bw-output/
+libraries/readline/
