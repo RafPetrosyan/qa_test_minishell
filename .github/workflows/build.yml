@@ -59,7 +59,8 @@ jobs:
             for file in *.c; do
               absfile=$(realpath "$file")
               abso=$(realpath "objects/${file%.c}.o")
-              $CC -I$(pwd)/includes \
+              $CC -std=c99 -Wall -Wextra -Werror \
+                  -I$(pwd)/includes \
                   -I$(pwd)/libraries/readline-8.2/install/include \
                   -L$(pwd)/libraries/readline-8.2/install/lib \
                   -c "$absfile" -o "$abso"
