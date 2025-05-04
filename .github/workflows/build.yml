@@ -39,11 +39,14 @@ jobs:
           unzip build-wrapper-linux-x86.zip
           chmod +x build-wrapper-linux-x86/build-wrapper-linux-x86-64
 
-      - name: Build and wrap (clean + all)
+      - name: Clean and build wrapped
         run: |
+          make fclean
+          rm -rf bw-output
           ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
             --out-dir bw-output \
-            make fclean all
+            make
+
 
       - name: Run SonarCloud analysis
         uses: SonarSource/sonarcloud-github-action@v2
