@@ -6,47 +6,45 @@ on:
       - main
 
 jobs:
-  build:
-    name: Build and Analyze
+  sonarcloud:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Install build dependencies
+      - name: Install dependencies (compiler, unzip, wget)
         run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential libncurses-dev wget
+          sudo apt update
+          sudo apt install -y build-essential wget curl unzip
 
-      - name: Download and install GNU Readline
+      - name: Download and install GNU Readline 8.2 locally
         run: |
+          mkdir -p libraries
           wget https://ftp.gnu.org/gnu/readline/readline-8.2.tar.gz
           tar -xzf readline-8.2.tar.gz
-          cd readline-8.2
-          ./configure --prefix=$GITHUB_WORKSPACE/readline-install
+          mv readline-8.2 libraries/
+          cd libraries/readline-8.2
+          ./configure --prefix=$GITHUB_WORKSPACE/libraries/readline-8.2/install
           make
           make install
-          cd ..
+          cd ../..
 
       - name: Download and prepare build-wrapper
         run: |
-          wget https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
-          unzip build-wrapper-linux-x86.zip
+          curl -sSLo bw.zip https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
+          unzip bw.zip
           chmod +x build-wrapper-linux-x86/build-wrapper-linux-x86-64
 
-      - name: Build with build-wrapper
+      - name: Compile project with build-wrapper (no Makefile)
         run: |
           ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
             --out-dir bw-output \
-            gcc -Wall -Wextra -Werror -I./includes -I$GITHUB_WORKSPACE/readline-install/include \
-            -c *.c
+            bash -c 'for file in *.c; do gcc -Wall -Wextra -Werror \
+            -I./includes \
+            -I./libraries/readline-8.2/install/include \
+            -L./libraries/readline-8.2/install/lib \
+            -c "$file"; done'
 
       - name: Run SonarCloud analysis
         uses: SonarSource/sonarcloud-github-action@v2
@@ -58,4 +56,5 @@ jobs:
             -Dsonar.organization=rafpetrosyan
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.sources=.
-            -Dsonar.cfamily.build-wrapper-output=bw-output
+            -Dsonar.sourceEncoding=UTF-8
+            -Dsonar.cfamily.compile-commands=bw-output/compile_commands.json
