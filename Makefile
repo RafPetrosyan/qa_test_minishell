@@ -27,11 +27,11 @@ all: $(NAME)
 $(NAME): $(OBJS)
 	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) $(LIBS)
 
-clean:
-	rm -rf $(OBJ_DIR)
-
 fclean: clean
 	rm -f $(NAME)
+
+clean:
+	rm -rf $(OBJ_DIR)
 
 re: fclean all
 
