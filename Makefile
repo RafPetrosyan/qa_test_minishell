@@ -19,8 +19,8 @@ FORCE:
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c FORCE
 	@mkdir -p $(OBJ_DIR)
+	@echo "Compiling $<"
 	$(CC) $(CFLAGS) -c $< -o $@
-
 
 all: $(NAME)
 
