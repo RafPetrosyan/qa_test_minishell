@@ -46,14 +46,19 @@ jobs:
             --out-dir bw-output \
             bash -c '
             for file in *.c; do
+              abs_path=$(realpath "$file")
               gcc -Wall -Wextra -Werror \
                   -I./includes \
                   -I./libraries/readline-8.2/install/include \
                   -L./libraries/readline-8.2/install/lib \
-                  -c "$file" -o "objects/${file%.c}.o"
+                  -c "$abs_path" -o "objects/${file%.c}.o"
             done
             '
-
+      - name: Show compile_commands.json summary
+        run: |
+          echo "File count:" $(jq length bw-output/compile_commands.json)
+          echo "First file entry:"
+          jq '.[0]' bw-output/compile_commands.json
 
       - name: "Debug: show first 20 lines of compile_commands.json"
         run: |
