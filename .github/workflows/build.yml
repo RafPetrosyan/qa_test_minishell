@@ -43,7 +43,7 @@ jobs:
         run: |
           mkdir -p objects
           SRC_DIR=$(pwd)
-          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bw-output sh -c '
+          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bw-output env SRC_DIR=$SRC_DIR bash -c '
             for file in *.c; do
               abs_path="$SRC_DIR/$file"
               gcc -Wall -Wextra -Werror \
