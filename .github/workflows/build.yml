@@ -39,13 +39,11 @@ jobs:
 
       - name: Build with build-wrapper
         run: |
-          rm -rf bw-output objects minishell
+          rm -rf bw-output *.o minishell
           ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
             --out-dir bw-output \
-            gcc -Wall -Wextra -Werror -g \
-            -I./includes -I./libraries/readline/include \
-            -c sources/*.c
-          gcc -o minishell sources/*.o -L./libraries/readline/lib -lreadline -lncurses
+            bash -c "gcc -Wall -Wextra -Werror -g -I./includes -I./libraries/readline/include -c sources/*.c && gcc -o minishell *.o -L./libraries/readline/lib -lreadline -lncurses"
+
 
       - name: Show compile_commands.json
         run: |
