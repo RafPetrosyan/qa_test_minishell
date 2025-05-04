@@ -1,31 +1,20 @@
 NAME = minishell
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -g -I$(realpath ./includes) -I$(realpath ./libraries/readline/include) -fdiagnostics-color=always
+CFLAGS = -Wall -Wextra -Werror -g -I$(CURDIR)/readline-install/include
+LDFLAGS = -L$(CURDIR)/readline-install/lib
+LDLIBS = -lreadline -lncurses
 
-SRC_DIR = sources
-OBJ_DIR = objects
+SRCS = $(wildcard *.c)
+OBJS = $(SRCS:.c=.o)
 
-SRCS = $(wildcard $(SRC_DIR)/*.c)
-ABS_SRCS = $(realpath $(SRCS))
-OBJS = $(ABS_SRCS:%.c=%.o)
-
-LIBS = -L./libraries/readline/lib -lreadline -lncurses
-
-# Կոմպիլացիոն կանոնը (տեղադրում է .o ֆայլը նույն վայրում)
-%.o: %.c
-	@echo ">>> compiling: $<"
-	$(CC) $(CFLAGS) -c $< -o $@
-
-# Գլխավոր թիրախ
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) $(LIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
 clean:
-	rm -rf $(OBJ_DIR)
-	find $(SRC_DIR) -name '*.o' -delete
+	rm -f $(OBJS)
 
 fclean: clean
 	rm -f $(NAME)
