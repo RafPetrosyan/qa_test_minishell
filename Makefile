@@ -15,9 +15,8 @@ OBJS = $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 LIBS = -L./libraries/readline/lib -lreadline -lncurses
 
-FORCE:
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c FORCE
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)
 	@echo "[BUILDING] $<"
 	$(CC) $(CFLAGS) -c $< -o $@
