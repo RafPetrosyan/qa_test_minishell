@@ -58,4 +58,4 @@ jobs:
             -Dsonar.projectKey=RafPetrosyan_qa_test_minishell
             -Dsonar.organization=rafpetrosyan
             -Dsonar.sources=.
-            -Dsonar.cfamily.build-wrapper-output=bw-output
+            -Dsonar.cfamily.compile-commands=bw-output/compile_commands.json
