@@ -45,6 +45,7 @@ jobs:
             --out-dir bw-output \
             make clean all
 
+
       - name: Run SonarCloud analysis
         uses: SonarSource/sonarcloud-github-action@v2
         env:
