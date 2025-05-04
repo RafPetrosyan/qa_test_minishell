@@ -1,7 +1,7 @@
 NAME = minishell
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -g -I./includes -I./libraries/readline/include -fdiagnostics-color=always
+CFLAGS = -Wall -Wextra -Werror -g -I$(realpath ./includes) -I$(realpath ./libraries/readline/include) -fdiagnostics-color=always
 
 SRC_DIR = sources
 OBJ_DIR = objects
