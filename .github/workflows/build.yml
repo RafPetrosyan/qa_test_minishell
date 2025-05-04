@@ -23,6 +23,15 @@ jobs:
       - name: Install build dependencies
         run: sudo apt-get update && sudo apt-get install -y build-essential libncurses-dev wget unzip
 
+      - name: Install GCC 12
+        run: |
+          sudo apt-get install -y gcc-12 g++-12
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 100
+          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-12 100
+
+      - name: Check GCC version
+        run: gcc --version
+
       - name: Download and install GNU Readline
         run: |
           wget https://ftp.gnu.org/gnu/readline/readline-8.2.tar.gz
@@ -39,21 +48,29 @@ jobs:
           unzip build-wrapper-linux-x86.zip
           chmod +x build-wrapper-linux-x86/build-wrapper-linux-x86-64
 
-      - name: Build with build-wrapper (absolute paths)
+      - name: Build with build-wrapper using gcc-12
         run: |
           mkdir -p objects
+          export CC=/usr/bin/gcc-12
+          export CXX=/usr/bin/g++-12
           ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
             --out-dir bw-output \
             bash -c '
             for file in *.c; do
               absfile=$(realpath "$file")
-              gcc -Wall -Wextra -Werror \
-                  -I$(realpath ./includes) \
-                  -I$(realpath ./libraries/readline-8.2/install/include) \
-                  -L$(realpath ./libraries/readline-8.2/install/lib) \
-                  -c "$absfile" -o "objects/$(basename ${file%.c}.o)"
+              abso=$(realpath "objects/${file%.c}.o")
+              $CC -I$(pwd)/includes \
+                  -I$(pwd)/libraries/readline-8.2/install/include \
+                  -L$(pwd)/libraries/readline-8.2/install/lib \
+                  -c "$absfile" -o "$abso"
             done
             '
+
+      - name: Show compile_commands.json summary
+        run: |
+          echo "File count:" $(jq length bw-output/compile_commands.json)
+          echo "First file entry:"
+          jq '.[0]' bw-output/compile_commands.json
 
       - name: "Debug: show first 20 lines of compile_commands.json"
         run: |
