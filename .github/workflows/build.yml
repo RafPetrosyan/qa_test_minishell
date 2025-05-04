@@ -20,45 +20,24 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y build-essential libncurses-dev
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libncurses-dev
 
-      - name: Download and prepare build-wrapper
+      - name: Download and set up build-wrapper
         run: |
           wget https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
           unzip build-wrapper-linux-x86.zip
           chmod +x build-wrapper-linux-x86/build-wrapper-linux-x86-64
-          mkdir -p bw-output
 
-      - name: Configure readline
-        run: |
-          cd libraries/readline-8.2
-          ./configure --prefix=$GITHUB_WORKSPACE/libraries/readline
-          make
-          make install
-          cd ../..
-
-      - name: Clean project
-        run: make fclean || true
-
-      - name: Build with build-wrapper
+      - name: Build and wrap (clean + all)
         run: |
           ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
             --out-dir bw-output \
-            bash -c "make fclean && make all"
-
-
-
-      - name: Show build-wrapper output contents
-        run: ls -R bw-output
+            make fclean all
 
       - name: Run SonarCloud analysis
         uses: SonarSource/sonarcloud-github-action@v2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.projectKey=RafPetrosyan_qa_test_minishell
-            -Dsonar.organization=rafpetrosyan
-            -Dsonar.sources=.
-            -Dsonar.cfamily.build-wrapper-output=bw-output
