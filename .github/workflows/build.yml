@@ -29,12 +29,6 @@ jobs:
           sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 100
           sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-12 100
 
-      - name: Install GCC 12
-        run: |
-          sudo apt-get install -y gcc-12 g++-12
-          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 100
-          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-12 100
-
       - name: Check GCC version
         run: gcc --version
 
@@ -54,21 +48,23 @@ jobs:
           unzip build-wrapper-linux-x86.zip
           chmod +x build-wrapper-linux-x86/build-wrapper-linux-x86-64
 
-      - name: Build with build-wrapper
+      - name: Build with build-wrapper using gcc-12
         run: |
           mkdir -p objects
-          export ABS_SRC=$(pwd)
+          export CC=/usr/bin/gcc-12
+          export CXX=/usr/bin/g++-12
           ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
             --out-dir bw-output \
             bash -c '
             for file in *.c; do
-              gcc -Wall -Wextra -Werror \
-                  -I"$ABS_SRC/includes" \
-                  -I"$ABS_SRC/libraries/readline-8.2/install/include" \
-                  -L"$ABS_SRC/libraries/readline-8.2/install/lib" \
-                  -c "$ABS_SRC/$file" -o "objects/${file%.c}.o"
+              $CC -Wall -Wextra -Werror \
+                  -I$(pwd)/includes \
+                  -I$(pwd)/libraries/readline-8.2/install/include \
+                  -L$(pwd)/libraries/readline-8.2/install/lib \
+                  -c "$(pwd)/$file" -o "$(pwd)/objects/${file%.c}.o"
             done
             '
+
 
       - name: Show compile_commands.json summary
         run: |
