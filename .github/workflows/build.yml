@@ -42,9 +42,7 @@ jobs:
       - name: Build with build-wrapper
         run: |
           mkdir -p objects
-          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
-            --out-dir bw-output \
-            bash -c '
+          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bw-output sh -c '
             for file in *.c; do
               gcc -Wall -Wextra -Werror \
                   -I./includes \
@@ -52,7 +50,8 @@ jobs:
                   -L./libraries/readline-8.2/install/lib \
                   -c "$file" -o "objects/${file%.c}.o"
             done
-            '
+          '
+
 
       - name: "Debug: show first 20 lines of compile_commands.json"
         run: |
