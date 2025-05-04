@@ -37,28 +37,20 @@ jobs:
           unzip build-wrapper-linux-x86.zip
           chmod +x build-wrapper-linux-x86/build-wrapper-linux-x86-64
 
-      - name: Manual build using build-wrapper
+      - name: Build with build-wrapper
         run: |
           rm -rf bw-output objects minishell
-          mkdir -p objects
-          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bw-output bash -c '
-            for file in sources/*.c; do
-              echo ">>> compiling: $file"
-              gcc -Wall -Wextra -Werror -g -std=c99 \
-                -I./includes \
-                -I./libraries/readline/include \
-                -c "$file" -o "objects/$(basename "${file%.c}.o")"
-            done
+          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
+            --out-dir bw-output \
+            gcc -Wall -Wextra -Werror -g \
+            -I./includes -I./libraries/readline/include \
+            -c sources/*.c
+          gcc -o minishell sources/*.o -L./libraries/readline/lib -lreadline -lncurses
 
-            gcc -Wall -Wextra -Werror -g -std=c99 \
-              -I./includes \
-              -I./libraries/readline/include \
-              -o minishell objects/*.o \
-              -L./libraries/readline/lib -lreadline -lncurses
-          '
-
-      - name: Preview build-wrapper-dump.json
-        run: head -n 50 bw-output/build-wrapper-dump.json || echo "No dump found"
+      - name: Show compile_commands.json
+        run: |
+          echo "[INFO] compile_commands.json:"
+          head -n 100 bw-output/compile_commands.json || echo "Not found"
 
       - name: Run SonarCloud analysis
         uses: SonarSource/sonarcloud-github-action@v2
