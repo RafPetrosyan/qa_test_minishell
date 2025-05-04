@@ -36,17 +36,17 @@ jobs:
           unzip bw.zip
           chmod +x build-wrapper-linux-x86/build-wrapper-linux-x86-64
 
-      - name: Compile each file separately with build-wrapper
+      - name: Compile all .c files in one build-wrapper call (correct)
         run: |
-          for file in $(find "$GITHUB_WORKSPACE" -maxdepth 1 -name '*.c'); do
-            ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
-              --out-dir bw-output \
-              gcc -Wall -Wextra -Werror \
-              -I"$GITHUB_WORKSPACE/includes" \
-              -I"$GITHUB_WORKSPACE/libraries/readline-8.2/install/include" \
-              -L"$GITHUB_WORKSPACE/libraries/readline-8.2/install/lib" \
-              -c "$file"
-          done
+          FILES=$(find "$GITHUB_WORKSPACE" -maxdepth 1 -name '*.c' -exec realpath {} \;)
+          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
+            --out-dir bw-output \
+            gcc -Wall -Wextra -Werror \
+            -I"$GITHUB_WORKSPACE/includes" \
+            -I"$GITHUB_WORKSPACE/libraries/readline-8.2/install/include" \
+            -L"$GITHUB_WORKSPACE/libraries/readline-8.2/install/lib" \
+            -c $FILES
+
 
 
       - name: "Debug: print first 20 lines of compile_commands.json"
