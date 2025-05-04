@@ -36,16 +36,18 @@ jobs:
           unzip bw.zip
           chmod +x build-wrapper-linux-x86/build-wrapper-linux-x86-64
 
-      - name: Compile project with build-wrapper using absolute paths
+      - name: Compile each file separately with build-wrapper
         run: |
-          FILES=$(find "$GITHUB_WORKSPACE" -maxdepth 1 -name '*.c')
-          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
-            --out-dir bw-output \
-            gcc -Wall -Wextra -Werror \
-            -I"$GITHUB_WORKSPACE/includes" \
-            -I"$GITHUB_WORKSPACE/libraries/readline-8.2/install/include" \
-            -L"$GITHUB_WORKSPACE/libraries/readline-8.2/install/lib" \
-            -c $FILES
+          for file in $(find "$GITHUB_WORKSPACE" -maxdepth 1 -name '*.c'); do
+            ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
+              --out-dir bw-output \
+              gcc -Wall -Wextra -Werror \
+              -I"$GITHUB_WORKSPACE/includes" \
+              -I"$GITHUB_WORKSPACE/libraries/readline-8.2/install/include" \
+              -L"$GITHUB_WORKSPACE/libraries/readline-8.2/install/lib" \
+              -c "$file"
+          done
+
 
       - name: "Debug: print first 20 lines of compile_commands.json"
         run: |
@@ -65,3 +67,4 @@ jobs:
             -Dsonar.sources=.
             -Dsonar.sourceEncoding=UTF-8
             -Dsonar.cfamily.compile-commands=bw-output/compile_commands.json
+
