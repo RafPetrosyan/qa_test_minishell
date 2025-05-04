@@ -38,9 +38,19 @@ jobs:
           make install
           cd ../..
 
-      - name: Run build-wrapper
+      - name: Clean project
+        run: make fclean || true
+
+      - name: Build with build-wrapper
         run: |
-          build-wrapper-linux-x86-64 --out-dir bw-output make clean all
+          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
+            --out-dir bw-output \
+            bash -c "make fclean && make all"
+
+
+
+      - name: Show build-wrapper output contents
+        run: ls -R bw-output
 
       - name: Run SonarCloud analysis
         uses: SonarSource/sonarcloud-github-action@v2
