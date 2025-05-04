@@ -42,18 +42,19 @@ jobs:
       - name: Build with build-wrapper
         run: |
           mkdir -p objects
+          export ABS_SRC=$(pwd)
           ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
             --out-dir bw-output \
             bash -c '
             for file in *.c; do
-              abs_path=$(realpath "$file")
               gcc -Wall -Wextra -Werror \
-                  -I./includes \
-                  -I./libraries/readline-8.2/install/include \
-                  -L./libraries/readline-8.2/install/lib \
-                  -c "$abs_path" -o "objects/${file%.c}.o"
+                  -I"$ABS_SRC/includes" \
+                  -I"$ABS_SRC/libraries/readline-8.2/install/include" \
+                  -L"$ABS_SRC/libraries/readline-8.2/install/lib" \
+                  -c "$ABS_SRC/$file" -o "objects/${file%.c}.o"
             done
             '
+
       - name: Show compile_commands.json summary
         run: |
           echo "File count:" $(jq length bw-output/compile_commands.json)
