@@ -23,6 +23,12 @@ jobs:
       - name: Install build dependencies
         run: sudo apt-get update && sudo apt-get install -y build-essential libncurses-dev wget unzip
 
+      - name: Install GCC 12
+        run: |
+          sudo apt-get install -y gcc-12 g++-12
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 100
+          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-12 100
+
       - name: Download and install GNU Readline
         run: |
           wget https://ftp.gnu.org/gnu/readline/readline-8.2.tar.gz
